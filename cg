@@ -1,0 +1,903 @@
+2D TRANSFORMATION 
+#include<iostream.h>  
+#include<conio.h>  
+#include<graphics.h>  
+#include<stdlib.h>  
+#include<dos.h>  
+#include<math.h>  
+  
+int main()  
+{  
+  
+    int x0,y0;  
+    int gd = DETECT,gm;  
+    int xmax,ymax;  
+    initgraph(&gd,&gm,"c:\\Turboc3\\BGI");  
+    int i,j;  
+    setbkcolor(BLUE);  
+    setcolor(RED);  
+    rectangle(0,0,getmaxx(),getmaxy());  
+  
+    outtextxy(250,240,"::::PRESS ANY KEY TO CONTINUE:::::");  
+    while(!kbhit());  
+    for(i=50,j=0;i<=250,j<=250;i+=5,j+=5)  
+    {  
+    delay(120);  
+    cleardevice();  
+    if(i<=150)  
+    {  
+        setcolor(YELLOW);  
+        setfillstyle(1,YELLOW);  
+        fillellipse(i,300-j,20,20);  
+    }  
+    else  
+    {  
+        setcolor(GREEN^RED);  
+        setfillstyle(1,GREEN^RED);  
+        fillellipse(i,300-j,20,20);  
+    }  
+    }  
+    delay(1000);  
+    cleardevice();  
+    setcolor(RED);  
+    setfillstyle(1,RED);  
+    fillellipse(300,50,20,20);  
+    delay(150);  
+  
+    int k,l;  
+    for(k=305,l=55;k<=550,l<=300;k+=5,l+=5)  
+    {  
+    delay(120);  
+    cleardevice();  
+    if(k<=450)  
+    {  
+  
+        setcolor(GREEN^RED);  
+        setfillstyle(1,GREEN^RED);  
+  
+        fillellipse(k,l,20,20);  
+    }  
+    else  
+    {  
+        setcolor(YELLOW);  
+        setfillstyle(1,YELLOW);  
+        fillellipse(k,l,20,20);  
+    }  
+    }  
+} 
+return 0; 
+
+
+
+
+
+Draw Polygon 
+#include <conio.h> 
+#include <iostream.h> 
+#include <graphics.h> 
+#include <stdlib.h> 
+#include<dos.h> 
+class point 
+{ 
+public: 
+int x,y; 
+}; 
+class poly 
+{ 
+private: 
+point p[20]; 
+int inter[20],x,y; 
+int v,xmin,ymin,xmax,ymax; 
+public: 
+int c; 
+void read(); 
+void calcs(); 
+void display(); 
+void ints(float); 
+void sort(int); 
+}; 
+void poly::read() 
+{ 
+int i; 
+cout<<"\n Scan Fill Algorithm "; 
+cout<<"\n Enter Number Of Vertices Of Polygon: "; 
+cin>>v; 
+if(v>2) 
+{ 
+for(i=0;i<v; i++) //ACCEPT THE VERTICES 
+{ 
+cout<<"\nEnter co-ordinate no. "<<i+1<<" : "; 
+cout<<"\n\tx"<<(i+1)<<"="; 
+cin>>p[i].x; 
+cout<<"\n\ty"<<(i+1)<<"="; 
+cin>>p[i].y; 
+} 
+p[i].x=p[0].x; 
+p[i].y=p[0].y; 
+xmin=xmax=p[0].x; 
+ymin=ymax=p[0].y; 
+ } 
+ else 
+ cout<<"\n Enter valid no. of vertices."; 
+} 
+void poly::calcs() 
+{ 
+ for(int i=0;i<v;i++) 
+ { 
+ if(xmin>p[i].x) 
+ xmin=p[i].x; 
+ if(xmax<p[i].x) 
+ xmax=p[i].x; 
+ if(ymin>p[i].y) 
+ ymin=p[i].y; 
+ if(ymax<p[i].y) 
+ ymax=p[i].y; 
+ } 
+} 
+void poly::display() 
+{ 
+ int ch1; 
+ char ch='y'; 
+ float s,s2; 
+ do 
+ { 
+ cout<<"\n\nMENU:"; 
+ cout<<"\n\n\t1 . Scan line Fill "; 
+ cout<<"\n\n\t2 . Exit "; 
+ cout<<"\n\nEnter your choice:"; 
+ cin>>ch1; 
+ switch(ch1) 
+ { 
+ case 1: 
+ s=ymin+0.01; 
+ delay(100); 
+ cleardevice(); 
+ while(s<=ymax) 
+ { 
+ ints(s); 
+ sort(s); 
+ s++; 
+ } 
+ break; 
+ case 2: 
+ exit(0); 
+ } 
+ cout<<"Do you want to continue?: "; 
+ cin>>ch; 
+ }while(ch=='y' || ch=='Y'); 
+} 
+void poly::ints(float z) 
+{ 
+ int x1,x2,y1,y2,temp; 
+ c=0; 
+ for(int i=0;i<v;i++) 
+ { 
+ x1=p[i].x; 
+ y1=p[i].y; 
+ x2=p[i+1].x; 
+ y2=p[i+1].y; 
+ if(y2<y1) 
+ { 
+ temp=x1; 
+ x1=x2; 
+ x2=temp; 
+ temp=y1; 
+ y1=y2; 
+ y2=temp; 
+ } 
+ if(z<=y2&&z>=y1) 
+ { 
+ if((y1-y2)==0) 
+ x=x1; 
+ else 
+ { 
+ x=((x2-x1)*(z-y1))/(y2-y1); 
+ x=x+x1; 
+ } 
+ if(x<=xmax && x>=xmin) 
+ inter[c++]=x; 
+ } 
+ } 
+} 
+void poly::sort(int z) // sorting 
+{ 
+ int temp,j,i; 
+ for(i=0;i<v;i++) 
+ { 
+ line(p[i].x,p[i].y,p[i+1].x,p[i+1].y); 
+ } 
+ delay(100); 
+ for(i=0; i<c;i+=2) 
+ { 
+ delay(100); 
+ line(inter[i],z,inter[i+1],z); 
+ } 
+} 
+int main() //main 
+{ 
+ int cl,gd=DETECT,gm; 
+ initgraph(&gd,&gm,"c:\\Turboc3\\BGI"); 
+ cleardevice(); 
+ poly x; 
+ x.read(); 
+ x.calcs(); 
+ cleardevice(); 
+ cout<<"\n\tEnter The Color You Want :(In Range 0 To 15 )->"; //selecting color 
+ cin>>cl; 
+ setcolor(cl); 
+ x.display(); 
+ 
+ closegraph(); //closing graph 
+ getch(); 
+ return 0; 
+} 
+
+
+
+
+
+DDA 
+#include<iostream.h>  
+#include<graphics.h>  
+#include<conio.h>  
+#include<math.h>  
+#include<dos.h>  
+drawline(float x1,float y1,float x2,float y2)  
+{  
+f
+ loat dx,dy,step,i,x,y;  
+f
+ loat xn,yn;  
+dx=(x2-x1);  
+dy=(y2-y1);  
+if(dx>dy)  
+{  
+step=dx;  
+}  
+else  
+{  
+step=dy;  
+}  
+xn=dx/step;  
+yn=dy/step;  
+x=x1;  
+y=y1;  
+i=0;  
+while(i<=step)  
+{  
+putpixel(x,y,WHITE);  
+x=xn+x;  
+y=yn+y;  
+i++;  
+}  
+return 0;  
+}  
+main()  
+{  
+delay(100);  
+int gd=DETECT,gm;  
+initgraph(&gd,&gm,"C:\\Turboc3\\BGI");  
+drawline(100,100,500,100);  
+drawline(100,100,100,400);  
+drawline(100,400,500,400);  
+drawline(500,100,500,400);  
+drawline(100,250,300,400);  
+drawline(100,250,300,100);  
+drawline(300,400,500,250);  
+drawline(300,100,500,250);  
+circle(300,250,120);  
+getch();  
+closegraph();  
+return 0;  
+}
+
+
+
+
+SNOWFLAKE USING FRACTAL LINES 
+#include <iostream.h>  
+#include <math.h>  
+#include <graphics.h>  
+#include<conio.h>  
+#include<dos.h>  
+class kochCurve  
+{  
+public:  
+void koch(int it,int x1,int y1,int x5,int y5)  
+{  
+int x2,y2,x3,y3,x4,y4;  
+int dx,dy;  
+if (it==0)  
+{  
+line(x1,y1,x5,y5);  
+}  
+else  
+{  
+delay(10);  
+dx=(x5-x1)/3;  
+dy=(y5-y1)/3;  
+x2=x1+dx;  
+y2=y1+dy;  
+x3=(int)(0.5*(x1+x5)+sqrt(3)*(y1-y5)/6);  
+y3=(int)(0.5*(y1+y5)+sqrt(3)*(x5-x1)/6);  
+x4=2*dx+x1;  
+y4=2*dy+y1;  
+koch(it-1,x1,y1,x2,y2);  
+koch(it-1,x2,y2,x3,y3);  
+koch(it-1,x3,y3,x4,y4);  
+koch(it-1,x4,y4,x5,y5);  
+}  
+}  
+};  
+int main()  
+{  
+kochCurve k;  
+int it;  
+cout<<"Enter Number Of Iterations : "<<endl;  
+cin>>it;  
+int gd=DETECT,gm;  
+initgraph(&gd,&gm,"c:\\Turboc3\\BGI");  
+k.koch(it,150,20,20,280);  
+k.koch(it,280,280,150,20);  
+k.koch(it,20,280,280,280);  
+getch();  
+closegraph();  
+return 0;  
+}
+
+
+
+
+SUTHERLAND ALGORITHM 
+#include <stdio.h> 
+#include <graphics.h> 
+void main() { 
+int gd = DETECT, gm; 
+f
+ loat xmax, ymax, xmin, ymin, x11, y11, x22, y22, m; 
+f
+ loat x1, y1; 
+int i; 
+f
+ loat a[4], b[4], c[4]; 
+// Initialize graphics 
+initgraph(&gd, &gm, "C:\\Turboc3\\BGI"); 
+// Enter the viewport coordinates 
+printf("\nEnter the top-left coordinate of viewport: "); 
+scanf("%f %f", &xmin, &ymin); 
+printf("\nEnter the bottom-right coordinate of viewport: "); 
+scanf("%f %f", &xmax, &ymax); 
+rectangle(xmin, ymin, xmax, ymax); 
+// Enter the coordinates of the line endpoints 
+printf("\nEnter the coordinates of 1st endpoint of line: "); 
+scanf("%f %f", &x11, &y11); 
+printf("\nEnter the coordinates of 2nd endpoint of line: "); 
+scanf("%f %f", &x22, &y22); 
+line(x11, y11, x22, y22); 
+// Initialize region codes 
+for (i = 0; i < 4; i++) { 
+a[i] = 0; 
+        b[i] = 0; 
+    } 
+ 
+    // Calculate slope 
+    m = (y22 - y11) / (x22 - x11); 
+ 
+    // Set region codes 
+    if (x11 < xmin) a[3] = 1; 
+    if (x11 > xmax) a[2] = 1; 
+    if (y11 < ymin) a[1] = 1; 
+    if (y11 > ymax) a[0] = 1; 
+    if (x22 < xmin) b[3] = 1; 
+    if (x22 > xmax) b[2] = 1; 
+    if (y22 < ymin) b[1] = 1; 
+    if (y22 > ymax) b[0] = 1; 
+ 
+    // Display region codes 
+    printf("\nRegion code of 1st point: "); 
+    for (i = 0; i < 4; i++) { 
+        printf("%f", a[i]); 
+    } 
+    printf("\nRegion code of 2nd point: "); 
+    for (i = 0; i < 4; i++) { 
+        printf("%f", b[i]); 
+    } 
+ 
+    // ANDing region codes 
+    printf("\nANDing: "); 
+    for (i = 0; i < 4; i++) { 
+        c[i] = a[i] && b[i]; 
+        printf("%f", c[i]); 
+    } 
+ 
+    // Check visibility 
+    if ((c[0] == 0) && (c[1] == 0) && (c[2] == 0) && (c[3] == 0)) { 
+        if ((a[0] == 0) && (a[1] == 0) && (a[2] == 0) && (a[3] == 0) && (b[0] == 0) && (b[1] == 0) && (b[2] == 0) && 
+(b[3] == 0)) { 
+            printf("\nThe line is totally visible and not a clipping candidate"); 
+            line(x11, y11, x22, y22); 
+        } else { 
+            printf("\nLine is partially visible"); 
+            if ((a[0] == 0) && (a[1] == 1)) { 
+                x1 = x11 + (ymin - y11) / m; 
+                x11 = x1; 
+                y11 = ymin; 
+            } else if ((b[0] == 0) && (b[1] == 1)) { 
+                x1 = x22 + (ymin - y22) / m; 
+                x22 = x1; 
+                y22 = ymin; 
+            } 
+ 
+            if ((a[0] == 1) && (a[1] == 0)) { 
+                x1 = x11 + (ymax - y11) / m; 
+                x11 = x1; 
+                y11 = ymax; 
+            } else if ((b[0] == 1) && (b[1] == 0)) { 
+                x1 = x22 + (ymax - y22) / m; 
+                x22 = x1; 
+                y22 = ymax; 
+            } 
+ 
+            if ((a[2] == 0) && (a[3] == 1)) { 
+                y1 = y11 + m * (xmin - x11); 
+                y11 = y1; 
+                x11 = xmin; 
+            } else if ((b[2] == 0) && (b[3] == 1)) { 
+                y1 = y22 + m * (xmin - x22); 
+                y22 = y1; 
+                x22 = xmin; 
+            } 
+ 
+            if ((a[2] == 1) && (a[3] == 0)) { 
+                y1 = y11 + m * (xmax - x11); 
+                y11 = y1; 
+                x11 = xmax; 
+            } else if ((b[2] == 1) && (b[3] == 0)) { 
+                y1 = y22 + m * (xmax - x22); 
+                y22 = y1; 
+                x22 = xmax; 
+            } 
+ 
+            printf("\nAfter clipping:"); 
+            line(x11, y11, x22, y22); 
+        } 
+    } else { 
+        printf("\nLine is invisible"); 
+    } 
+ 
+    // Close graphics mode 
+    getch(); 
+    closegraph(); 
+}
+
+
+
+
+
+
+
+
+SEARCHING AND SORTING FOR STL  
+/* Write C++ program using STL for Sorting and searching with user-defined records such as  
+Person Record (Name, birth date, telephone no), item record (item code, item name, quantity  
+and cost) */    
+#include <iostream>    //standard input output stream header file    
+#include <algorithm>    
+//The STL algorithms are generic because they can operate on a variety of data structures    
+#include <vector>     
+using namespace  std ; 
+class Item           
+{        
+public:      
+char name[10];         
+int quantity;    
+int cost;        
+int code;    
+bool operator==(const Item& i1)   
+{         
+}    
+return code == i1.code;   
+bool operator<(const Item& i1)    
+{    
+}    
+};    
+return code < i1.code;   
+vector<Item> o1;    
+void print(Item &i1);  
+void  display();  
+void insert();   
+void search();    
+void dlt();    
+bool compare(const Item &i1, const Item &i2)    
+{    
+return i1.cost <  i2.cost;     
+}    
+int main ()   
+{       
+int ch;        
+do    
+{      
+cout<<"\n***** Menu *****";     
+cout<<"\n1.Insert";          
+cout<<"\n2.Display";          
+cout<<"\n3.Search";          
+cout<<"\n4.Sort";          
+cout<<"\n5.Delete";          
+cout<<"\n6.Exit";          
+cout<<"\nEnter your choice:";          
+cin>>ch;    
+switch(ch)    
+{                  
+case 1:    
+case 2:    
+case 3:    
+case 4:    
+insert();                            
+break;                                      
+display();                             
+break;          
+search();                           
+break;                                                 
+sort(o1.begin(),o1.end(),compare);                           
+cout<<"\n\n Sorted on Cost";                           
+display();          
+case 5:    
+break;   
+dlt();     
+break;    
+case 6:    
+}    
+}   
+exit(0);    
+while(ch!=6);    
+return 0;    
+}    
+void insert()    
+{     
+Item i1;   
+cout<<"\nEnter Item Name:";       
+cin>>i1.name;       
+cout<<"\nEnter Item Quantity:";                
+cin>>i1.quantity;       
+cout<<"\nEnter Item Cost:";      
+cin>>i1.cost;      
+cout<<"\nEnter Item Code:";       
+cin>>i1.code;     
+o1.push_back(i1);    
+}    
+void display()    
+{        
+for_each(o1.begin(),o1.end(),print);    
+}    
+void print(Item &i1)    
+{       
+cout<<"\n";       
+cout<<"\nItem Name:"<<i1.name;    
+cout<<"\nItem Quantity:"<<i1.quantity;    
+cout<<"\nItem Cost:"<<i1.cost;     
+cout<<"\nItem Code:"<<i1.code;    
+}    
+void search()   
+{      
+vector<Item>::iterator p;    
+Item i1;    
+cout<<"\nEnter Item Code to search:";  
+cin>>i1.code;   
+p=find(o1.begin(),o1.end(),i1);   
+if(p==o1.end())    
+{    
+cout<<"\nNot found.";    
+}       
+else    
+{    
+cout<<"\nFound.";    
+}    
+}    
+void dlt()   
+{        
+vector<Item>::iterator p;    
+Item i1;    
+cout<<"\nEnter Item Code to delete:";      
+cin>>i1.code;      
+p=find(o1.begin(),o1.end(),i1);      
+if(p==o1.end())    
+{    
+cout<<"\nNot found.";    
+}     
+else     
+{           
+o1.erase(p);     
+cout<<"\nDeleted.";  
+} 
+}
+
+
+
+
+
+#include <iostream>  
+#include <fstream>  
+using namespace std;  
+  
+class Employee {  
+    char Name[20];  // Fixed-size array for the name  
+    int ID;  
+    double salary;  
+  
+public:  
+    void accept() {  
+        cout << "Enter name: ";  
+        cin >> Name;  // Input name  
+        cout << "Enter ID: ";  
+        cin >> ID;  // Input ID  
+        cout << "Enter salary: ";  
+        cin >> salary;  // Input salary  
+    }  
+  
+    void display() {  
+        cout << "\nName: " << Name  
+             << "\nID: " << ID  
+             << "\nSalary: " << salary << endl;  
+    }  
+};  
+  
+int main() {  
+    Employee o[5];  // Array to hold employee information  
+    fstream f;  // File stream for reading and writing  
+    int i, n;  
+  
+    // Open file for writing binary data  
+    f.open("b16.txt", ios::out | ios::binary);  
+    if (!f) {  
+        cout << "Error in opening file for writing!" << endl;  
+        return 0;  
+    }  
+  
+    cout << "\nHow many employee information do you need to store? ";  
+    cin >> n;  
+    cout << "\nEnter information of employees in this format (NAME / ID / SALARY):" << endl;  
+  
+    // Accept employee details and write to file  
+    for (i = 0; i < n; i++) {  
+        cout << "\nEnter information for Employee " << i + 1 << ":" << endl;  
+        o[i].accept();  
+        f.write((char*)&o[i], sizeof(o[i]));  // Write object to file  
+    }  
+  
+    f.close();  // Close the file after writing  
+  
+    // Open file for reading binary data  
+    f.open("b16.txt", ios::in | ios::binary);  
+    if (!f) {  
+        cout << "Error in opening file for reading!" << endl;  
+        return 0;  
+    }  
+  
+    cout << "\nInformation of Employees is as follows:" << endl;  
+  
+    // Read employee details from file and display them  
+    for (i = 0; i < n; i++) {  
+        f.read((char*)&o[i], sizeof(o[i]));  // Read object from file  
+        o[i].display();  
+    }  
+  
+    f.close();  // Close the file after reading  
+  
+    return 0;  
+} 
+
+
+
+
+
+DATABASE OF STUDENT INFORMATION SYSTEM 
+#include <iostream>  
+#include<string.h>  
+#include<iomanip>  
+using namespace std;  
+class db {    
+public:  
+void fin() {  
+int roll;   
+char name[20];  
+char Class[10];   
+char Div[10];    
+char dob[10];    
+char bg[3]; 
+char contact[10];    
+char phone[10] ; 
+char license[12];   
+static int stdno;      
+static void count()  {   
+cout<<"\nNo. of objects created: "<<stdno;   
+}   
+cout<<"\nInline Function!";  
+}   
+db()   {         
+roll=0;         
+strcpy(name,"Sachin");         
+strcpy(Class,"I");     
+strcpy(Div,"A");   
+strcpy(dob,"11/11/1111");   
+strcpy(bg,"A");       
+strcpy(contact,"city");        
+strcpy(phone,"9000000000");        
+strcpy(license,"A0101010");   
+++stdno;   
+}   
+db(db *ob)  {   
+strcpy(name,ob->name);        
+strcpy(dob,ob->dob);        
+strcpy(Class,ob->Class);         
+strcpy(Div,ob->Div);         
+strcpy(bg,ob->bg);        
+strcpy(contact,ob->contact);        
+strcpy(phone,ob->phone);        
+strcpy(license,ob->license);   
+++stdno;   
+}   
+void getdata()   {   
+cout<<"\n\nEnter:name,roll,Class,Div,Dob,bg,contact,phone,license \n\n\n";                 
+cin>>name>>roll>>Class>>Div>>dob>>bg>>contact>>phone>>license;   
+}   
+friend void display(db d);   
+~db()  {   
+cout<<"\n\n"<<this->name<<"(Object) is destroyed!";   
+}   
+};   
+void display(db d)  {  
+cout<<"\n"<<setw(12)<<d.name<<setw(5)<<d.roll<<setw(4)<<d.Class<<setw(3)<<d.Div<<setw(12)<<
+ d.dob<<setw(4)<<d.bg<<setw(12)<<d.contact<<" "<<setw(12)<<d.phone<<" "<<setw(12)<<d.license;   
+}   
+int db::stdno = 0;   
+int main()  {   
+int n,i;      
+db d1,*ptr[5];      
+cout<<"\nDefault values:";      
+display(d1);   
+d1.getdata();      
+display(d1);   
+db d2(&d1);  
+cout<<"\n\nUse of copy constructor :\n";    
+display(d2);   
+cout<<"\nHow many objects u want to create?:";       
+cin>>n;      
+for(i=0;i<n;i++)  {    
+ptr[i]=new db();       
+ptr[i]->getdata();   
+}  
+cout<<"\n"<<setw(12)<<"name"<<setw(5)<<"roll"<<setw(4)<<"Class"<<setw(4)<<"Div"<<setw(12)<<"dob"<<set
+ w(4)<<"bg"<<setw(12)<<"contact"<<setw(12)<<"phone"<<setw(12)<<"license";     
+for(i=0;i<n;i++){  
+display(*ptr[i]);  
+}  
+db::count();    
+for(i=0;i<n;i++)  {       
+delete(ptr[i]);   
+}   
+cout<<"\nObjects deleted!" ;     
+return 0;   
+}
+
+
+
+
+
+
+FUNCTION TEMPLATE   
+  
+/*Write a function template selection Sort. Write a program that inputs, sorts and outputs an  
+int array and a float array.*/    
+#include<iostream>   
+#include<limits>    
+using namespace std;   
+template<class T>    
+void selection_sort() //Template function    
+        {    
+T a[10];           
+T temp;         
+ for(int i=0;i<10;i++)    //Accepting elements    
+            {    
+cout<<"a["<<i<<"]=";                  
+cin>>a[i];    
+            }    
+for(int i=0;i<10;i++)     //Sorting logic    
+{               
+   for(int j=i+1;j<10;j++)   {                      
+if(a[i]>a[j])  {                           
+temp=a[i];                          
+a[i]=a[j];                          
+a[j]=temp;    
+                }    
+            }    
+         }    
+   
+for(int i=0;i<10;i++)    {    
+cout<<a[i]<<"\n";    
+  }   
+}    
+int main()    
+{        
+cout<<"Integer sorting...\n";       
+selection_sort<int>();        
+cout<<"Floating sorting...\n";      
+selection_sort<float>();    
+return 0; 
+} 
+
+
+
+
+
+
+OPERATOR OVERLOADING  Complex Number 
+#include<iostream>    
+using namespace std;   
+class complex   {    
+f
+ loat real,imag;  
+public:    
+}    
+complex(float x1,float x2) {   
+real=x1;  
+imag=x2;   
+}   
+complex()  {   
+real= imag = 0;   
+}    
+friend istream &operator >>(istream &in, complex &t) {    
+in>>t.real>>t.imag;   
+return in;    
+complex operator+(complex t) {    
+complex z;    
+z.real=this->real+t.real;    
+z.imag=this->imag+t.imag;    
+return z;    
+}    
+complex operator*(complex t) {   
+complex z;    
+z.real=this->real*t.real-this->imag*t.imag;    
+z.imag=this->imag*t.real+this->real*t.imag;   
+return z;    
+}    
+friend ostream&operator<<(ostream&op,complex&t) {    
+op<<t.real<<"+i"<<t.imag; 
+return op;    
+}   
+};   
+int main()   { 
+complex c1, c2(3,5) , c3,c4;   
+int c;    
+char ch;  
+do    
+{    
+cout<<"%%%%%%%%%%%%%% Polynomial operations%%%%%%%%%%%%%\n";   
+cout<<" 1] Addition of two complex no\n";  
+cout<< " 2]Multiplication of two complex no\n";  
+cout<<"enter your choise :";    
+cin>>c;  
+switch(c) {  
+case 1:    
+cout<<"enter real &img  part of complex no. 1\n";   
+cin>>c1;    
+cout<<"enter real &img  part of complex no. 2\n";  
+cin>>c2;    
+c3=c1+c2; 
+cout<<"addition is : ";    
+cout<<c3<<"\n";    
+break;    
+case 2:  
+cout<<"enter real &img  part of complex no. 1\n";   
+cin>>c1;   
+cout<<"enter real &img  part of complex no. 2\n";  
+cin>>c2;  
+c4=c1*c2;  
+cout<<"multiplication is :";      
+cout<<c4<<"\n";  
+break;  
+}  
+cout<<"do you want to continue";   
+cin>>ch;    
+}while(ch=='y'||ch=='Y'); 
+return 0;    
+} 
